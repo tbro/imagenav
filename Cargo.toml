@@ -14,3 +14,7 @@ terminal-keycode = "1.1.1"
 version = "0.35.2"
 default-features = false
 features = ["image", "gfx"]
+
+[profile.release]
+debug = false
+strip = "symbols"
