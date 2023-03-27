@@ -11,7 +11,6 @@ use std::thread::{self, JoinHandle};
 use terminal_keycode::{Decoder, KeyCode};
 
 pub fn get_paths(path: &Path) -> Vec<PathBuf> {
-    println!("{:?}", path);
     let read_dir = std::fs::read_dir(path).unwrap();
     read_dir
         .into_iter()

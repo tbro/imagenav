@@ -105,9 +105,11 @@ pub fn run(path: &Path) -> Result<(), String> {
         let window = canvas.window_mut();
         let _position = window.position();
         let _size = window.size();
-	let image = nav.image.clone();
-	let fname = image.file_name().unwrap();
-        window.set_title(fname.to_str().unwrap()).map_err(|e| e.to_string())?;
+        let image = nav.image.clone();
+        let fname = image.file_name().unwrap();
+        window
+            .set_title(fname.to_str().unwrap())
+            .map_err(|e| e.to_string())?;
         window.set_fullscreen(nav.fullscreen)?;
 
         let surface = Surface::from_file(image).unwrap();
