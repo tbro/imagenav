@@ -125,9 +125,8 @@ pub fn run(path: &Path) -> Result<(), String> {
 
 fn main() -> Result<(), String> {
     let args: Vec<_> = env::args().collect();
-    let pkg = env::var("CARGO_PKG_NAME").unwrap();
     if args.len() < 2 {
-        println!("Usage: {pkg} /path/to/dir")
+        println!("Usage: imagenav /path/to/dir")
     } else {
         run(Path::new(&args[1]))?;
     }
