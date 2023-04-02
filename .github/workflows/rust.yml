@@ -19,7 +19,7 @@ jobs:
     - name: Install Deps
       run: sudo apt-get install -y libsdl2-gfx-dev libsdl2-image-dev
     - name: Build
-      run: cargo build --verbose
+      run: cargo build --release --verbose
     - name: Run tests
       run: cargo test --verbose
     - name: Upload the artifacts
@@ -27,4 +27,4 @@ jobs:
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
-        args: 'imagenav'
+        args: 'target/release/imagenav'
