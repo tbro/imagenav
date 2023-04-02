@@ -14,7 +14,7 @@ pub struct Navigator<'a> {
 impl<'a> Navigator<'a> {
     pub fn new(list: &'a mut LinkedList<PathBuf>) -> Self {
         let mut cursor = list.cursor();
-        let image = cursor.next().unwrap().to_owned();
+        let image = cursor.next().expect("No images found").to_owned();
         let fullscreen = FullscreenType::Off;
         let rotation: f64 = 0.0;
         let zoom: f64 = 1.0;
