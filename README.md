@@ -10,8 +10,8 @@ Accepts a directory containing images as input. It *should* filter out
 non-image files. No recursion is done into sub-directories.
 
 	imagenav ~/dir/photos/
-	
-## commands
+
+### commands
 
 Currently supported commands are
 
@@ -20,3 +20,17 @@ Currently supported commands are
 	* `f`  fullscreen
 	* `r`  rotate
     * `q`  quit
+
+## dependencies
+
+You need sdl libraries on your OS. Milage may vary depending on sytem, but on debian-like apt can obtain them for you: 
+
+	sudo apt-get install libsdl2-gfx-dev libsdl2-image-dev
+
+## display
+
+You man need to export your display. `:1` may or may not be correct
+depending on your system.
+
+	export DISPLAY=:1
+

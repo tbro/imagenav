@@ -36,7 +36,7 @@ pub fn run(path: &Path) -> Result<(), String> {
     let video_subsystem = sdl_context.video()?;
     // let _image_context = sdl2::image::init(InitFlag::PNG | InitFlag::JPG)?;
     let window = video_subsystem
-        .window("rust-sdl2 demo: Window", 800, 600)
+        .window("imagenav: Window", 800, 600)
         .resizable()
         .build()
         .map_err(|e| e.to_string())?;
