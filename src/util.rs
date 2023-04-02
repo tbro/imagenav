@@ -12,13 +12,16 @@ use terminal_keycode::{Decoder, KeyCode};
 
 pub fn get_paths(path: &Path) -> Vec<PathBuf> {
     let read_dir = std::fs::read_dir(path).unwrap();
-    read_dir
+    let mut vec = read_dir
         .into_iter()
         .filter_map(|x| x.ok())
         // filter out random fs detritus
         .filter(|x| Surface::from_file(x.path()).is_ok())
         .map(|x| x.path())
-        .collect::<Vec<_>>()
+        .collect::<Vec<PathBuf>>();
+
+    vec.sort_by(|a,b|a.file_name().unwrap().cmp(b.file_name().unwrap()));
+    vec
 }
 
 #[derive(Copy, Clone, Debug)]
