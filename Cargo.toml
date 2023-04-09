@@ -3,8 +3,6 @@ name = "imagenav"
 version = "0.1.1"
 edition = "2021"
 
-# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
-
 [dependencies]
 linked-list = "0.0.3"
 raw_tty = "0.1.0"
@@ -13,8 +11,13 @@ terminal-keycode = "1.1.1"
 [dependencies.sdl2]
 version = "0.35.2"
 default-features = false
-features = ["image", "gfx"]
+features = ["image"]
 
 [profile.release]
 debug = false
 strip = "symbols"
+
+# [package.metadata.vcpkg]
+# dependencies = ["sdl2-image", "sdl2-gfx"]
+# git = "https://github.com/microsoft/vcpkg"
+# rev = "2023.02.24"

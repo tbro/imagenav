@@ -20,7 +20,7 @@ pub fn get_paths(path: &Path) -> Vec<PathBuf> {
         .map(|x| x.path())
         .collect::<Vec<PathBuf>>();
 
-    vec.sort_by(|a,b|a.file_name().unwrap().cmp(b.file_name().unwrap()));
+    vec.sort_by(|a, b| a.file_name().unwrap().cmp(b.file_name().unwrap()));
     vec
 }
 

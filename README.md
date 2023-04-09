@@ -25,7 +25,7 @@ Currently supported commands are
 
 You need sdl libraries on your OS. Milage may vary depending on sytem, but on debian-like apt can obtain them for you: 
 
-	sudo apt-get install libsdl2-gfx-dev libsdl2-image-dev
+	sudo apt-get install libsdl2-image-2.0-0
 
 ## display
 
