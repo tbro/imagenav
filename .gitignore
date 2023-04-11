@@ -11,3 +11,4 @@ Cargo.lock
 # emacs
 .dir-locals.el
 **/*~undo-tree~
+*/*~
