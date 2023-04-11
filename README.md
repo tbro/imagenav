@@ -19,6 +19,7 @@ Currently supported commands are
     * `<-` (arrow left) previous image
 	* `f`  fullscreen
 	* `r`  rotate
+	* `p`  pageant mode (automatically scroll through the images)
     * `q`  quit
 
 ## dependencies
@@ -29,7 +30,7 @@ You need sdl libraries on your OS. Milage may vary depending on sytem, but on de
 
 ## display
 
-You man need to export your display. `:1` may or may not be correct
+You may need to export your display. `:1` may or may not be correct
 depending on your system.
 
 	export DISPLAY=:1

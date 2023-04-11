@@ -1,4 +1,5 @@
 use raw_tty::IntoRawMode;
+use rayon::prelude::*;
 use sdl2::image::LoadSurface;
 use sdl2::surface::Surface;
 use sdl2::video::FullscreenType;
@@ -10,18 +11,22 @@ use std::sync::{Arc, Mutex};
 use std::thread::{self, JoinHandle};
 use terminal_keycode::{Decoder, KeyCode};
 
-pub fn get_paths(path: &Path) -> Vec<PathBuf> {
-    let read_dir = std::fs::read_dir(path).unwrap();
-    let mut vec = read_dir
+/// Build a vec of files in the given directory
+/// filtering out random filesystem detritus. We use
+/// Rayon's multi-threaded iterators so it's not so slow.
+pub fn get_paths(path: &Path) -> Result<Vec<PathBuf>, String> {
+    let read_dir = std::fs::read_dir(path).map_err(|e| e.to_string())?;
+    let mut files = read_dir
         .into_iter()
+        .par_bridge()
         .filter_map(|x| x.ok())
-        // filter out random fs detritus
+        // try to load file onto a surface. filter out on failure
         .filter(|x| Surface::from_file(x.path()).is_ok())
         .map(|x| x.path())
         .collect::<Vec<PathBuf>>();
 
-    vec.sort_by(|a, b| a.file_name().unwrap().cmp(b.file_name().unwrap()));
-    vec
+    files.par_sort_unstable_by(|a, b| a.file_name().unwrap().cmp(b.file_name().unwrap()));
+    Ok(files)
 }
 
 #[derive(Copy, Clone, Debug)]

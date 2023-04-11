@@ -15,7 +15,7 @@ mod navigator;
 mod util;
 
 pub fn run(path: &Path) -> Result<(), String> {
-    let files = get_paths(path);
+    let files = get_paths(path)?;
     let mut list = LinkedList::new();
     for path in files {
         list.push_back(path);
@@ -29,9 +29,12 @@ pub fn run(path: &Path) -> Result<(), String> {
 
     let sdl_context = sdl2::init()?;
     let mut event_pump = sdl_context.event_pump()?;
+    // we set a timer to use for pageant mode
+    let timer = sdl_context.timer()?;
 
-    let mut nav = Navigator::new(&mut list, sdl_context);
-    nav.next();
+    // initialize navigator and show first image
+    let mut nav = Navigator::new(&mut list, sdl_context)?;
+    nav.next()?;
 
     'running: loop {
         if *should_exit.lock().unwrap() {
@@ -42,11 +45,11 @@ pub fn run(path: &Path) -> Result<(), String> {
             Ok(keycode) => {
                 match keycode {
                     KeyCode::Char('q') | KeyCode::CtrlC => *should_exit.lock().unwrap() = true,
-                    KeyCode::Char('f') => nav.fullscreen_toggle(),
-                    KeyCode::Char('r') => nav.rotate(1.0),
-                    // KeyCode::Char('p') => nav.presentation_toggle(),
-                    KeyCode::ArrowRight => nav.next(),
-                    KeyCode::ArrowLeft => nav.prev(),
+                    KeyCode::Char('f') => nav.fullscreen_toggle()?,
+                    KeyCode::Char('r') => nav.rotate(1.0)?,
+                    KeyCode::Char('p') | KeyCode::Space => nav.pageant_toggle(),
+                    KeyCode::ArrowRight => nav.next()?,
+                    KeyCode::ArrowLeft => nav.prev()?,
                     _ => {
                         print![
                             "code={:?} bytes={:?} printable={:?}\r\n",
@@ -73,7 +76,14 @@ pub fn run(path: &Path) -> Result<(), String> {
             };
         }
 
-        // let _ticks = timer.ticks() as i32;
+        let ticks = timer.ticks() as i32;
+        // call next every second
+        if nav.pageant_mode && (ticks / 100) % 10 == 0 && nav.pageant_ready {
+            nav.next()?;
+            nav.pageant_ready = false;
+        } else if nav.pageant_mode && (ticks / 100) % 10 != 0 && !nav.pageant_ready {
+            nav.pageant_ready = true;
+        }
         sleep(10);
     }
 
