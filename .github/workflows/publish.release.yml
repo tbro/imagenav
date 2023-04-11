@@ -15,10 +15,8 @@ jobs:
         run: sudo apt-get update && sudo apt-get install -y libsdl2-image-dev
       - name: Build
         run: cargo build --release --verbose
-      - name: Rename
-        run: cp target/release/imagenav imagenav-${{env.github_ref}}
       - name: Publish release
         uses: eloquent/github-release-action@v3
         with:
           assets: |
-            - path: target/release/imagenav-${{env.github_ref}}
+            - path: target/release/imagenav
