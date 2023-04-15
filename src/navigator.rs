@@ -40,7 +40,7 @@ impl<'a> Navigator<'a> {
             .accelerated()
             .build()
             .map_err(|e| e.to_string())?;
-	// println!("{:?}", canvas.info());
+        // println!("{:?}", canvas.info());
         let s = Self {
             cursor,
             fullscreen,
@@ -57,20 +57,16 @@ impl<'a> Navigator<'a> {
     fn update_canvas(&mut self) -> Result<(), String> {
         self.canvas.clear();
         let texture_creator = self.canvas.texture_creator();
-        let texture = texture_creator
-            .load_texture(self.image.clone())
-            .map_err(|e| e.to_string())?;
-        self.canvas
-            .copy_ex(
-                &texture,
-                None,
-                None,
-                self.rotation * -90_f64,
-                None,
-                false,
-                false,
-            )
-            .unwrap();
+        let texture = texture_creator.load_texture(self.image.clone())?;
+        self.canvas.copy_ex(
+            &texture,
+            None,
+            None,
+            self.rotation * -90_f64,
+            None,
+            false,
+            false,
+        )?;
         self.canvas.present();
         Ok(())
     }
@@ -82,28 +78,68 @@ impl<'a> Navigator<'a> {
             .map_err(|e| e.to_string())?;
         Ok(())
     }
+    /// peek ahead to see if the next image can be loaded onto a texture
+    /// if not, remove it from the list and recur
     pub fn next(&mut self) -> Result<(), String> {
-        self.image = if let Some(image) = self.cursor.next() {
+        // if there is a next item in list assign it to image
+        // otherwise must be at the end. So reset and peek again
+        let image = if let Some(image) = self.cursor.peek_next() {
             image.to_owned()
         } else {
+            // return to beginning
             self.cursor.reset();
-            let next = self.cursor.next().unwrap();
-            next.to_owned()
+            if let Some(image) = self.cursor.peek_next() {
+                image.to_path_buf()
+            } else {
+                return Err("no images found".to_string());
+            }
         };
-        self.window_title = self.image.file_name().unwrap().to_owned();
-        self.update_canvas()?;
-        self.update_window()?;
+
+        // if `image` can be loaded onto a texture it is supported
+        // otherwise remove it from the list
+        let texture_creator = self.canvas.texture_creator();
+        if let Ok(_t) = texture_creator.load_texture(image) {
+            // we could load the image in the texture, so let's move the cursor
+            self.image = self.cursor.next().unwrap().to_path_buf();
+            // this unwrap is safe as long as we filter out directories
+            // in the get_files() utility
+            self.window_title = self.image.file_name().unwrap().to_owned();
+            self.update_canvas()?;
+            self.update_window()?;
+        } else {
+            self.cursor.remove();
+            // try again
+            self.next()?;
+        };
         Ok(())
     }
+    /// prev() works differently from next() b/c there is no
+    /// remove_prev(). So we go a head and advance (reverse?) the cursor
+    /// so that when we call reverse it is in the right place
     pub fn prev(&mut self) -> Result<(), String> {
+        // if there is no previous we must be at the beginning
+        // so call prev() again
         self.image = if let Some(image) = self.cursor.prev() {
             image.to_owned()
+        } else if let Some(image) = self.cursor.prev() {
+            image.to_path_buf()
         } else {
-            self.cursor.prev().unwrap().to_owned()
+            return Err("no images found".to_string());
         };
-        self.window_title = self.image.file_name().unwrap().to_owned();
-        self.update_canvas()?;
-        self.update_window()?;
+        // if `image` can be loaded onto a texture it is supported
+        // otherwise remove it from the list
+        let texture_creator = self.canvas.texture_creator();
+        if let Ok(_t) = texture_creator.load_texture(self.image.clone()) {
+            // this unwrap is safe as long as we filter out directories
+            // in the get_files() utility
+            self.window_title = self.image.file_name().unwrap().to_owned();
+            self.update_canvas()?;
+            self.update_window()?;
+        } else {
+            // file cannot be loaded into a texture, so we don't want it
+            self.cursor.remove();
+            self.prev()?;
+        };
         Ok(())
     }
     pub fn fullscreen_toggle(&mut self) -> Result<(), String> {

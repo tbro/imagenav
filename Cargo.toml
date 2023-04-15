@@ -1,6 +1,6 @@
 [package]
 name = "imagenav"
-version = "0.2.4"
+version = "0.2.5"
 edition = "2021"
 
 [dependencies]
@@ -17,8 +17,3 @@ features = ["image"]
 [profile.release]
 debug = false
 strip = "symbols"
-
-# [package.metadata.vcpkg]
-# dependencies = ["sdl2-image", "sdl2-gfx"]
-# git = "https://github.com/microsoft/vcpkg"
-# rev = "2023.02.24"

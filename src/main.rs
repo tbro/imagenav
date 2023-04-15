@@ -21,21 +21,21 @@ pub fn run(path: &Path) -> Result<(), String> {
         list.push_back(path);
     }
 
-    // track if we are exiting
-    let should_exit = Arc::new(Mutex::new(false));
-
-    // spawn a thread to handle stdin
-    let (stdin_channel, handle) = spawn_stdin_channel(should_exit.clone());
-
     let sdl_context = sdl2::init()?;
     let mut event_pump = sdl_context.event_pump()?;
     // we set a timer to use for pageant mode
     let timer = sdl_context.timer()?;
-
-    // initialize navigator and show first image
+    // initialize navigator
     let mut nav = Navigator::new(&mut list, sdl_context)?;
+
+    // show first image
     nav.next()?;
 
+    // track if we are exiting
+    let should_exit = Arc::new(Mutex::new(false));
+    // spawn a thread to handle stdin
+
+    let (stdin_channel, handle) = spawn_stdin_channel(should_exit.clone());
     'running: loop {
         if *should_exit.lock().unwrap() {
             break 'running;

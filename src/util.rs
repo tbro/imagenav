@@ -1,7 +1,5 @@
 use raw_tty::IntoRawMode;
 use rayon::prelude::*;
-use sdl2::image::LoadSurface;
-use sdl2::surface::Surface;
 use sdl2::video::FullscreenType;
 use std::io::{stdin, Read};
 use std::ops::Deref;
@@ -19,12 +17,16 @@ pub fn get_paths(path: &Path) -> Result<Vec<PathBuf>, String> {
     let mut files = read_dir
         .into_iter()
         .par_bridge()
+        // filter out i/o errors
         .filter_map(|x| x.ok())
-        // try to load file onto a surface. filter out on failure
-        .filter(|x| Surface::from_file(x.path()).is_ok())
         .map(|x| x.path())
+        // filter out directories
+        .filter(|x| x.file_name().is_some())
         .collect::<Vec<PathBuf>>();
 
+    if files.is_empty() {
+        return Err("no files found in image directory".to_string());
+    }
     files.par_sort_unstable_by(|a, b| a.file_name().unwrap().cmp(b.file_name().unwrap()));
     Ok(files)
 }
