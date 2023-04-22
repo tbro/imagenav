@@ -33,7 +33,6 @@ pub fn run(path: &Path) -> Result<(), String> {
 
     // track if we are exiting
     let should_exit = Arc::new(Mutex::new(false));
-    // spawn a thread to handle stdin
 
     let (stdin_channel, handle) = spawn_stdin_channel(should_exit.clone());
     'running: loop {

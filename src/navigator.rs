@@ -5,14 +5,13 @@ use std::{ffi::OsString, path::PathBuf};
 
 /// Navigator holds surface state
 pub struct Navigator<'a> {
-    pub cursor: Cursor<'a, PathBuf>,
-    pub image: PathBuf,
-    pub rotation: f64,
-    pub zoom: f64,
-    pub fullscreen: FullscreenType,
+    cursor: Cursor<'a, PathBuf>,
+    image: PathBuf,
+    rotation: f64,
+    fullscreen: FullscreenType,
     pub pageant_mode: bool,
     pub pageant_ready: bool,
-    pub canvas: WindowCanvas,
+    canvas: WindowCanvas,
     window_title: OsString,
 }
 
@@ -23,7 +22,6 @@ impl<'a> Navigator<'a> {
         let window_title = image.file_name().unwrap().to_owned();
         let fullscreen = FullscreenType::Off;
         let rotation: f64 = 0.0;
-        let zoom: f64 = 1.0;
         let pageant_mode = false;
         let pageant_ready = false;
         let video_subsystem = sdl_context.video()?;
@@ -45,7 +43,6 @@ impl<'a> Navigator<'a> {
             cursor,
             fullscreen,
             rotation,
-            zoom,
             image,
             pageant_mode,
             canvas,
@@ -161,8 +158,5 @@ impl<'a> Navigator<'a> {
         self.rotation += f;
         self.update_canvas()?;
         Ok(())
-    }
-    pub fn zoom(&mut self, f: f64) {
-        self.zoom += f;
     }
 }
